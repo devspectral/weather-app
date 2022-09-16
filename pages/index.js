@@ -18,6 +18,7 @@ import {
 } from 'react-icons/bs';
 import { TbTemperatureCelsius } from 'react-icons/tb';
 import { ImSpinner2 } from 'react-icons/im';
+import Forecast from './components/Forecast';
 
 const APIkey = 'aaa64c37774b7c5d69eee9ed046bbe75';
 
@@ -217,6 +218,9 @@ const Weather = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+              <div className='w-full p-4 flex justify-center align-center mt-2'>
+                <Forecast />
               </div>
             </div>
           )}
