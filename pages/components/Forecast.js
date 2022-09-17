@@ -1,30 +1,38 @@
-import { useState, useEffect, useInsertionEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const FCASTkey = 'aaa64c37774b7c5d69eee9ed046bbe75';
 
 const Forecast = () => {
-  const [fcast, setFcast] = useState(null);
+  const [fcast, setFcast] = useState([]);
 
   useEffect(() => {
-    const forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=Chicago&units=metric&cnt=5&appid=${FCASTkey}`;
+    const forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=california&units=metric&cnt=5&appid=${FCASTkey}`;
 
     axios
       .get(forecastURL)
       .then((res) => {
-        setFcast(res.data);
+        setFcast(
+          res.data.list.map((day) => {
+            return day.weather[0].main;
+          })
+        );
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [location]);
+  }, []);
 
-  console.log();
+  // const mapped = fcast[0].weather.map((item) => {
+  //   return item;
+  // });
+
+  console.log(fcast);
 
   return (
     <>
       <div>
-        <div>{fcast.cod}</div>
+        <div></div>
       </div>
     </>
   );
