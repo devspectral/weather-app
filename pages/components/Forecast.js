@@ -7,32 +7,30 @@ const Forecast = () => {
   const [fcast, setFcast] = useState([]);
 
   useEffect(() => {
-    const forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=california&units=metric&cnt=5&appid=${FCASTkey}`;
+    const forecastURL = `https://api.openweathermap.org/data/2.5/forecast?q=chicago&units=metric&cnt=5&appid=${FCASTkey}`;
 
     axios
       .get(forecastURL)
       .then((res) => {
         setFcast(
           res.data.list.map((day) => {
-            return day.weather[0].main;
+            return day.weather[0];
           })
         );
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
-
-  // const mapped = fcast[0].weather.map((item) => {
-  //   return item;
-  // });
-
-  console.log(fcast);
+  }, [location]);
 
   return (
     <>
       <div>
-        <div></div>
+        <div className='w-full flex p-4 my-2'>
+          {fcast.map((item) => {
+            return <div className='px-4 sm:m-4'>{item.main}</div>;
+          })}
+        </div>
       </div>
     </>
   );
