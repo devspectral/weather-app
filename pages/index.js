@@ -29,12 +29,13 @@ const Weather = () => {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [fcast, setFcast] = useState([]);
+  const [fcastTemp, setFcastTemp] = useState([]);
 
-  const handleInput = (e) => {
+  const handleInput = e => {
     setInputValue(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     if (inputValue !== '') {
       setLocation(inputValue);
     }
@@ -56,14 +57,31 @@ const Weather = () => {
 
     axios
       .get(forecastURL)
-      .then((res) => {
+      .then(res => {
         setFcast(
-          res.data.list.map((day) => {
+          res.data.list.map(day => {
             return day.weather[0];
           })
         );
       })
-      .catch((err) => {
+      .catch(err => {
+        console.log(err);
+      });
+  }, [location]);
+
+  useEffect(() => {
+    const forecastTempURL = `https://api.openweathermap.org/data/2.5/forecast?q=${location}&units=metric&cnt=5&appid=${APIkey}`;
+
+    axios
+      .get(forecastTempURL)
+      .then(res => {
+        setFcastTemp(
+          res.data.list.map(tempDay => {
+            return tempDay.main.temp;
+          })
+        );
+      })
+      .catch(err => {
         console.log(err);
       });
   }, [location]);
@@ -75,13 +93,13 @@ const Weather = () => {
 
     axios
       .get(dataURL)
-      .then((res) => {
+      .then(res => {
         setTimeout(() => {
           setData(res.data);
           setLoading(false);
         }, 1000);
       })
-      .catch((err) => {
+      .catch(err => {
         setLoading(false);
         setErrorMsg(err);
         console.log(err);
@@ -146,13 +164,13 @@ const Weather = () => {
         >
           <div className='h-full relative flex items-center justify-between p-2'>
             <input
-              onChange={(e) => handleInput(e)}
+              onChange={e => handleInput(e)}
               className='flex-1 text-white text-[16px] font-light pl-6 h-full bg-transparent outline-none placeholder:text-white/60'
               type='text'
               placeholder='Search city or country'
             />
             <button
-              onClick={(e) => handleSubmit(e)}
+              onClick={e => handleSubmit(e)}
               className='bg-[#858585] hover:bg-[#a3a3a3] w-20 h-12 rounded-full flex justify-center items-center transition'
             >
               <IoMdSearch className='text-gray-100 text-2xl' />
@@ -236,56 +254,82 @@ const Weather = () => {
                   </div>
                 </div>
               </div>
-              <div className='w-full p-4 flex justify-center align-center mt-2'>
+
+              <div className='w-full p-4 flex justify-center align-center'>
                 <div>
-                  <div className='w-full flex p-4 my-2'>
-                    {fcast.map((item) => {
-                      let forecastIcon;
+                  <div className='w-full flex align-center justify-center my-6 text-gray-300'>
+                    5-DAY FORECAST
+                  </div>
+                  <div className='w-full'>
+                    <div className='flex justify-between'>
+                      {fcast.map(item => {
+                        let forecastIcon;
 
-                      switch (item.main) {
-                        case 'Clouds':
-                          forecastIcon = <IoMdCloudy />;
-                          break;
-                        case 'Haze':
-                          forecastIcon = (
-                            <BsCloudHaze2Fill className='text-[#cecece]' />
-                          );
-                          break;
-                        case 'Rain':
-                          forecastIcon = (
-                            <IoMdRainy className='text-[#b3b2b2]' />
-                          );
-                          break;
-                        case 'Clear':
-                          forecastIcon = (
-                            <IoMdSunny className='text-[#FDFD96]' />
-                          );
-                          break;
-                        case 'Drizzle':
-                          forecastIcon = (
-                            <BsCloudDrizzleFill className='text-[#D4FAFA]' />
-                          );
-                          break;
-                        case 'Snow':
-                          forecastIcon = (
-                            <IoMdSnow className='text-[#9DCAEB]' />
-                          );
-                          break;
-                        case 'Thunderstorm':
-                          forecastIcon = (
-                            <IoMdThunderstorm className='text-[#b9b9b9]' />
-                          );
-                          break;
-                      }
+                        switch (item.main) {
+                          case 'Clouds':
+                            forecastIcon = <IoMdCloudy />;
+                            break;
+                          case 'Haze':
+                            forecastIcon = (
+                              <BsCloudHaze2Fill className='text-[#cecece]' />
+                            );
+                            break;
+                          case 'Rain':
+                            forecastIcon = (
+                              <IoMdRainy className='text-[#b3b2b2]' />
+                            );
 
-                      return (
-                        <>
-                          <div className='text-[32px] px-4 sm:m-4'>
-                            {forecastIcon}
-                          </div>
-                        </>
-                      );
-                    })}
+                            break;
+                          case 'Clear':
+                            forecastIcon = (
+                              <IoMdSunny className='text-[#FDFD96]' />
+                            );
+
+                            break;
+                          case 'Drizzle':
+                            forecastIcon = (
+                              <BsCloudDrizzleFill className='text-[#D4FAFA]' />
+                            );
+
+                            break;
+                          case 'Snow':
+                            forecastIcon = (
+                              <IoMdSnow className='text-[#9DCAEB]' />
+                            );
+
+                            break;
+                          case 'Thunderstorm':
+                            forecastIcon = (
+                              <IoMdThunderstorm className='text-[#b9b9b9]' />
+                            );
+
+                            break;
+                        }
+
+                        return (
+                          <>
+                            <div className='w-full'>
+                              <div className='text-[32px] px-4  sm:m-2'>
+                                {forecastIcon}
+                              </div>
+                            </div>
+                          </>
+                        );
+                      })}
+                    </div>
+                    <div className='flex justify-between'>
+                      {fcastTemp.map(t => {
+                        return (
+                          <>
+                            <div className='w-full'>
+                              <div className='text-[20px] text-gray-300 px-4 justify-center flex'>
+                                {parseInt(t)}
+                              </div>
+                            </div>
+                          </>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
